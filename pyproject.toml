@@ -1,0 +1,114 @@
+[build-system]
+requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning>=1.0.0,<2.0.0"]
+build-backend = "poetry_dynamic_versioning.backend"
+
+[tool.poetry]
+name = "edge-yolo-demo"
+version = "0.1.0"
+description = "A demonstration of running a containerised YOLO v8 Model on an edge compute device"
+authors = [
+    "San Duffield <sam.duffield@balena.io>",
+]
+readme = "README.md"
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+loguru = { version = "0.7.2" }
+opencv-python = { version = "4.9.0.80" }
+tensorflow = { version = "2.16.1" }
+tensorflow-hub = { version = "0.16.1" }
+ultralytics = { version = "8.2.75" }
+flask = { version = "3.0.2" }
+pillow = { version = "10.4.0" }
+
+[tool.poetry.scripts]
+bootstrap_edge_demo = "edge_yolo_demo.quick_demo:main"
+
+[tool.poetry.group.test]
+optional = true
+[tool.poetry.group.test.dependencies]
+pytest = "^6.0.0"
+pytest-mock = "*"
+
+[tool.poetry.group.dev]
+optional = true
+[tool.poetry.group.dev.dependencies]
+black = "^24.0.0"
+flake8 = "^7.0.0"
+isort = "^5.13.0"
+mypy = "^1.8.0"
+pylint = "^3.0.0"
+bandit = "^1.7.0"
+pre-commit = "^3.6.0"
+
+[tool.poetry-dynamic-versioning]
+enable = true
+
+# Linting and formatting tool configurations
+
+[tool.black]
+line-length = 120
+target-version = ['py311']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | dist
+)/
+'''
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+line_length = 120
+known_first_party = ["edge_yolo_demo"]
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+strict_equality = true
+
+[[tool.mypy.overrides]]
+module = [
+    "cv2.*",
+    "ultralytics.*",
+    "tensorflow.*",
+    "flask.*"
+]
+ignore_missing_imports = true
+
+[tool.pylint.messages_control]
+disable = [
+    "missing-docstring",
+    "too-few-public-methods",
+    "too-many-arguments",
+    "too-many-locals",
+    "too-many-branches",
+    "too-many-statements"
+]
+
+[tool.pylint.format]
+max-line-length = 120
+
+[tool.bandit]
+exclude_dirs = ["tests", "test"]
+skips = ["B101"]  # Skip assert_used test
+
